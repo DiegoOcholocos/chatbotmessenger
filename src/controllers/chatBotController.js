@@ -1,27 +1,26 @@
 require("dotenv").config();
 import request from "request";
 
-let postWebhook = (req, res) =>{
-    // Parse the request body from the POST
+let postWebhook = (req, res) => {
+    // Analiza el cuerpo de la solicitud POST
     let body = req.body;
 
-    // Check the webhook event is from a Page subscription
+    // Verifica que el evento de webhook provenga de una suscripción a la página
     if (body.object === 'page') {
 
-        // Iterate over each entry - there may be multiple if batched
-        body.entry.forEach(function(entry) {
+        // Itera sobre cada entrada, puede haber múltiples si están en lotes
+        body.entry.forEach(function (entry) {
 
-            // Gets the body of the webhook event
+            // Obtiene el cuerpo del evento de webhook
             let webhook_event = entry.messaging[0];
             console.log(webhook_event);
 
-
-            // Get the sender PSID
+            // Obtiene el ID del remitente (PSID)
             let sender_psid = webhook_event.sender.id;
             console.log('Sender PSID: ' + sender_psid);
 
-            // Check if the event is a message or postback and
-            // pass the event to the appropriate handler function
+            // Verifica si el evento es un mensaje o un postback y
+            // pasa el evento a la función manejadora adecuada
             if (webhook_event.message) {
                 handleMessage(sender_psid, webhook_event.message);
             } else if (webhook_event.postback) {
@@ -30,108 +29,61 @@ let postWebhook = (req, res) =>{
 
         });
 
-        // Return a '200 OK' response to all events
+        // Devuelve una respuesta '200 OK' para todos los eventos
         res.status(200).send('EVENT_RECEIVED');
 
     } else {
-        // Return a '404 Not Found' if event is not from a page subscription
+        // Devuelve un '404 Not Found' si el evento no proviene de una suscripción a la página
         res.sendStatus(404);
     }
 };
 
 let getWebhook = (req, res) => {
-    // Your verify token. Should be a random string.
+    // Tu token de verificación. Debería ser una cadena aleatoria.
     let VERIFY_TOKEN = process.env.MY_VERIFY_FB_TOKEN;
 
-    // Parse the query params
+    // Analiza los parámetros de la consulta
     let mode = req.query['hub.mode'];
     let token = req.query['hub.verify_token'];
     let challenge = req.query['hub.challenge'];
 
-    // Checks if a token and mode is in the query string of the request
+    // Verifica si un token y modo están en la cadena de consulta de la solicitud
     if (mode && token) {
 
-        // Checks the mode and token sent is correct
+        // Verifica que el modo y el token enviados sean correctos
         if (mode === 'subscribe' && token === VERIFY_TOKEN) {
 
-            // Responds with the challenge token from the request
+            // Responde con el token de desafío de la solicitud
             console.log('WEBHOOK_VERIFIED');
             res.status(200).send(challenge);
 
         } else {
-            // Responds with '403 Forbidden' if verify tokens do not match
+            // Responde con '403 Forbidden' si los tokens de verificación no coinciden
             res.sendStatus(403);
         }
     }
 };
 
-// Handles messages events
-// function handleMessage(sender_psid, received_message) {
-//     let response;
-//
-//     // Check if the message contains text
-//     if (received_message.text) {
-//
-//         // Create the payload for a basic text message
-//         response = {
-//             "text": `You sent the message: "${received_message.text}". Now send me an image!`
-//         }
-//     } else if (received_message.attachments) {
-//
-//     // Gets the URL of the message attachment
-//     let attachment_url = received_message.attachments[0].payload.url;
-//         response = {
-//             "attachment": {
-//                 "type": "template",
-//                 "payload": {
-//                     "template_type": "generic",
-//                     "elements": [{
-//                         "title": "Is this the right picture?",
-//                         "subtitle": "Tap a button to answer.",
-//                         "image_url": attachment_url,
-//                         "buttons": [
-//                             {
-//                                 "type": "postback",
-//                                 "title": "Yes!",
-//                                 "payload": "yes",
-//                             },
-//                             {
-//                                 "type": "postback",
-//                                 "title": "No!",
-//                                 "payload": "no",
-//                             }
-//                         ],
-//                     }]
-//                 }
-//             }
-//         }
-//
-// }
-//
-// // Sends the response message
-//     callSendAPI(sender_psid, response);
-// }
-
-// Handles messaging_postbacks events
+// Maneja eventos de mensajes
 function handlePostback(sender_psid, received_postback) {
     let response;
 
-    // Get the payload for the postback
+    // Obtiene la carga útil del postback
     let payload = received_postback.payload;
 
-    // Set the response based on the postback payload
+    // Establece la respuesta según la carga útil del postback
     if (payload === 'yes') {
-        response = { "text": "Thanks!" }
+        response = { "text": "¡Gracias!" }
     } else if (payload === 'no') {
-        response = { "text": "Oops, try sending another image." }
+        response = { "text": "¡Oops, intenta enviar otra imagen!" }
     }
-    // Send the message to acknowledge the postback
+    // Envía el mensaje para confirmar el postback
     callSendAPI(sender_psid, response);
 }
 
-// Sends response messages via the Send API
+// Envía mensajes de respuesta a través de la API de envío
 function callSendAPI(sender_psid, response) {
-    // Construct the message body
+    // Construye el cuerpo del mensaje
     let request_body = {
         "recipient": {
             "id": sender_psid
@@ -139,7 +91,7 @@ function callSendAPI(sender_psid, response) {
         "message": { "text": response }
     };
 
-    // Send the HTTP request to the Messenger Platform
+    // Envía la solicitud HTTP a la plataforma de Messenger
     request({
         "uri": "https://graph.facebook.com/v7.0/me/messages",
         "qs": { "access_token": process.env.FB_PAGE_TOKEN },
@@ -147,32 +99,25 @@ function callSendAPI(sender_psid, response) {
         "json": request_body
     }, (err, res, body) => {
         if (!err) {
-            console.log('message sent!');
+            console.log('¡Mensaje enviado!');
         } else {
-            console.error("Unable to send message:" + err);
+            console.error("No se pudo enviar el mensaje:" + err);
         }
     });
 }
 
-// function firstTrait(nlp, name) {
-//     return nlp && nlp.entities && nlp.entities[name] && nlp.entities[name][0];
-// }
-
-function firstTrait(nlp, name) {
-    return nlp && nlp.entities && nlp.traits[name] && nlp.traits[name][0];
-}
-
+// Maneja eventos de mensajes_postbacks
 function handleMessage(sender_psid, message) {
-    //handle message for react, like press like button
-    // id like button: sticker_id 369239263222822
+    // Maneja mensajes para reacciones, como presionar el botón de "me gusta"
+    // ID del botón de "me gusta": sticker_id 369239263222822
 
-    if( message && message.attachments && message.attachments[0].payload){
-        callSendAPI(sender_psid, "Thank you for watching my video !!!");
+    if (message && message.attachments && message.attachments[0].payload) {
+        callSendAPI(sender_psid, "¡Gracias por ver mi video!");
         callSendAPIWithTemplate(sender_psid);
         return;
     }
 
-    let entitiesArr = [ "wit$greetings", "wit$thanks", "wit$bye" ];
+    let entitiesArr = ["wit$hola", "wit$gracias", "wit$adios"];
     let entityChosen = "";
     entitiesArr.forEach((name) => {
         let entity = firstTrait(message.nlp, name);
@@ -181,27 +126,28 @@ function handleMessage(sender_psid, message) {
         }
     });
 
-    if(entityChosen === ""){
-        //default
-        callSendAPI(sender_psid,`The bot is needed more training, try to say "thanks a lot" or "hi" to the bot` );
-    }else{
-       if(entityChosen === "wit$greetings"){
-           //send greetings message
-           callSendAPI(sender_psid,'Hi there! This bot is created by Hary Pham. Watch more videos on HaryPhamDev Channel!');
-       }
-       if(entityChosen === "wit$thanks"){
-           //send thanks message
-           callSendAPI(sender_psid,`You 're welcome!`);
-       }
-        if(entityChosen === "wit$bye"){
-            //send bye message
-            callSendAPI(sender_psid,'bye-bye!');
+    if (entityChosen === "") {
+        // Por defecto
+        callSendAPI(sender_psid, `El bot necesita más entrenamiento. Intenta decir "gracias" o "hola" al bot`);
+    } else {
+        if (entityChosen === "wit$hola") {
+            // Envía un mensaje de saludo
+            callSendAPI(sender_psid, '¡Hola! Este bot fue creado por Hary Pham. ¡Mira más videos en el canal de HaryPhamDev!');
+        }
+        if (entityChosen === "wit$gracias") {
+            // Envía un mensaje de agradecimiento
+            callSendAPI(sender_psid, '¡De nada!');
+        }
+        if (entityChosen === "wit$adios") {
+            // Envía un mensaje de despedida
+            callSendAPI(sender_psid, '¡Adiós!');
         }
     }
 }
 
+// Llama a la API de envío con una plantilla
 let callSendAPIWithTemplate = (sender_psid) => {
-    // document fb message template
+    // Documentación de la plantilla de mensajes de Facebook
     // https://developers.facebook.com/docs/messenger-platform/send-messages/templates
     let body = {
         "recipient": {
@@ -214,14 +160,14 @@ let callSendAPIWithTemplate = (sender_psid) => {
                     "template_type": "generic",
                     "elements": [
                         {
-                            "title": "Want to build sth awesome?",
+                            "title": "¿Quieres construir algo increíble?",
                             "image_url": "https://www.nexmo.com/wp-content/uploads/2018/10/build-bot-messages-api-768x384.png",
-                            "subtitle": "Watch more videos on my youtube channel ^^",
+                            "subtitle": "Mira más videos en mi canal de YouTube ^^",
                             "buttons": [
                                 {
                                     "type": "web_url",
                                     "url": "https://bit.ly/subscribe-haryphamdev",
-                                    "title": "Watch now"
+                                    "title": "Mira ahora"
                                 }
                             ]
                         }
@@ -238,14 +184,14 @@ let callSendAPIWithTemplate = (sender_psid) => {
         "json": body
     }, (err, res, body) => {
         if (!err) {
-            // console.log('message sent!')
+            // console.log('¡Mensaje enviado!')
         } else {
-            console.error("Unable to send message:" + err);
+            console.error("No se pudo enviar el mensaje:" + err);
         }
     });
 };
 
 module.exports = {
-  postWebhook: postWebhook,
-  getWebhook: getWebhook
+    postWebhook: postWebhook,
+    getWebhook: getWebhook
 };
