@@ -172,7 +172,7 @@ function handleMessage(sender_psid, message) {
         return;
     }
 
-    let entitiesArr = [ "wit$greetings", "wit$thanks", "wit$bye" ];
+    let entitiesArr = [ "wit$greetings", "wit$thanks", "wit$bye", "wit$empleada" ];
     let entityChosen = "";
     entitiesArr.forEach((name) => {
         let entity = firstTrait(message.nlp, name);
@@ -196,6 +196,10 @@ function handleMessage(sender_psid, message) {
         if(entityChosen === "wit$bye"){
             //send bye message
             callSendAPI(sender_psid,'bye-bye!');
+        }
+        if(entityChosen === "wit$empleada"){
+            //send bye message
+            callSendAPI(sender_psid,'esto es para una empleada domestica');
         }
     }
 }
