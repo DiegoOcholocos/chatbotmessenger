@@ -172,7 +172,7 @@ function handleMessage(sender_psid, message) {
         return;
     }
 
-    let entitiesArr = [ "wit$greetings", "wit$thanks", "wit$bye" ];
+    let entitiesArr = [ "wit$empleada", "wit$jefe", "wit$otro" ];
     let entityChosen = "";
     entitiesArr.forEach((name) => {
         let entity = firstTrait(message.nlp, name);
@@ -190,7 +190,7 @@ function handleMessage(sender_psid, message) {
     }else{
        if(entityChosen === "wit$empleada"){
            //send greetings message
-           callSendAPI(sender_psid,' este es el chatbot node cual es la duda que tiene, manda el codigo : *👉 1t : beneficios de trabajadora* *👉 2t : vacaciones correspondientes* *👉 3t : denunciar acoso* *👉 4t : otros*');
+           callSendAPI(sender_psid,' este es el chatbot nodecual es la duda que tiene, manda el codigo : *👉 1t : beneficios de trabajadora* *👉 2t : vacaciones correspondientes* *👉 3t : denunciar acoso* *👉 4t : otros*');
        }
        if(entityChosen === "wit$jefe"){
            //send thanks message
