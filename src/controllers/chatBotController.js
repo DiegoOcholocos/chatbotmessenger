@@ -183,19 +183,22 @@ function handleMessage(sender_psid, message) {
 
     if(entityChosen === ""){
         //default
-        callSendAPI(sender_psid,`The bot is needed more training, try to say "thanks a lot" or "hi" to the bot` );
+        callSendAPI(sender_psid,`¡Hola! Gracias por ponerte en contacto con nosotros. Sunafil para empleados domesticos esta para ayudarle por favor usted es:
+        😄 *empleada*
+        😮 *jefe*
+        😅 *otro*` );
     }else{
-       if(entityChosen === "wit$greetings"){
+       if(entityChosen === "wit$empleada"){
            //send greetings message
-           callSendAPI(sender_psid,'Hi there! This bot is created by Hary Pham. Watch more videos on HaryPhamDev Channel!');
+           callSendAPI(sender_psid,'cual es la duda que tiene, manda el codigo : *👉 1t : beneficios de trabajadora* *👉 2t : vacaciones correspondientes* *👉 3t : denunciar acoso* *👉 4t : otros*');
        }
-       if(entityChosen === "wit$thanks"){
+       if(entityChosen === "wit$jefe"){
            //send thanks message
-           callSendAPI(sender_psid,`You 're welcome!`);
+           callSendAPI(sender_psid,`Ères el jefe`);
        }
-        if(entityChosen === "wit$bye"){
+        if(entityChosen === "wit$otro"){
             //send bye message
-            callSendAPI(sender_psid,'bye-bye!');
+            callSendAPI(sender_psid,'Eres un agente externo');
         }
     }
 }
