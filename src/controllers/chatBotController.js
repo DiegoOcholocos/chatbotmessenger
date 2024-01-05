@@ -23,7 +23,7 @@ let postWebhook = (req, res) =>{
             // Check if the event is a message or postback and
             // pass the event to the appropriate handler function
             if (webhook_event.message) {
-                essage(sender_psid, webhook_event.message);
+                handleMessage(sender_psid, webhook_event.message);
             } else if (webhook_event.postback) {
                 handlePostback(sender_psid, webhook_event.postback);
             }
@@ -172,7 +172,13 @@ function handleMessage(sender_psid, message) {
         return;
     }
 
-    let entitiesArr = [ "wit$greetings", "wit$thanks", "wit$bye"];
+    if (message.text && message.text.toLowerCase().includes("empleada")) {
+        // Send a message for "empleada"
+        callSendAPI(sender_psid, 'Sí, eres una empleada. ¡Gracias por tu arduo trabajo!');
+        return;
+    }
+
+    let entitiesArr = [ "wit$greetings", "wit$thanks", "wit$bye" ];
     let entityChosen = "";
     entitiesArr.forEach((name) => {
         let entity = firstTrait(message.nlp, name);
@@ -196,15 +202,6 @@ function handleMessage(sender_psid, message) {
         if(entityChosen === "wit$bye"){
             //send bye message
             callSendAPI(sender_psid,'bye-bye!');
-        }
-        if(entityChosen === "wit$empleada"){
-            //send bye message
-            callSendAPI(sender_psid,'esto es para una empleada domestica');
-        }
-        if (message.text && message.text.toLowerCase().includes("empleada")) {
-            // Send a message for "empleada"
-            callSendAPI(sender_psid, 'Sí, eres una empleada. ¡Gracias por tu arduo trabajo!');
-            return;
         }
     }
 }
