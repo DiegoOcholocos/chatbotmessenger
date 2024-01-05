@@ -183,14 +183,14 @@ function handleMessage(sender_psid, message) {
 
     if(entityChosen === ""){
         //default
-        callSendAPI(sender_psid,`¡Hola! Gracias por ponerte en contacto con nosotros. Sunafil para empleados domesticos esta para ayudarle por favor usted es:
+        callSendAPI(sender_psid,`¡Hola este es el chatbot node! Gracias por ponerte en contacto con nosotros. Sunafil para empleados domesticos esta para ayudarle por favor usted es:
         😄 *empleada*
         😮 *jefe*
         😅 *otro*` );
     }else{
        if(entityChosen === "wit$empleada"){
            //send greetings message
-           callSendAPI(sender_psid,'cual es la duda que tiene, manda el codigo : *👉 1t : beneficios de trabajadora* *👉 2t : vacaciones correspondientes* *👉 3t : denunciar acoso* *👉 4t : otros*');
+           callSendAPI(sender_psid,' este es el chatbot node cual es la duda que tiene, manda el codigo : *👉 1t : beneficios de trabajadora* *👉 2t : vacaciones correspondientes* *👉 3t : denunciar acoso* *👉 4t : otros*');
        }
        if(entityChosen === "wit$jefe"){
            //send thanks message
