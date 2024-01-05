@@ -172,7 +172,7 @@ function handleMessage(sender_psid, message) {
         return;
     }
 
-    let entitiesArr = [ "wit$empleada", "wit$jefe", "wit$otro" ];
+    let entitiesArr = [ "wit$greetings", "wit$thanks", "wit$bye" ];
     let entityChosen = "";
     entitiesArr.forEach((name) => {
         let entity = firstTrait(message.nlp, name);
@@ -183,22 +183,19 @@ function handleMessage(sender_psid, message) {
 
     if(entityChosen === ""){
         //default
-        callSendAPI(sender_psid,`¡Hola este es el chatbot node! Gracias por ponerte en contacto con nosotros. Sunafil para empleados domesticos esta para ayudarle por favor usted es:
-        😄 *empleada*
-        😮 *jefe*
-        😅 *otro*` );
+        callSendAPI(sender_psid,`The bot is needed more training, try to say "thanks a lot" or "hi" to the bot` );
     }else{
-       if(entityChosen === "wit$empleada"){
+       if(entityChosen === "wit$greetings"){
            //send greetings message
-           callSendAPI(sender_psid,' este es el chatbot nodecual es la duda que tiene, manda el codigo : *👉 1t : beneficios de trabajadora* *👉 2t : vacaciones correspondientes* *👉 3t : denunciar acoso* *👉 4t : otros*');
+           callSendAPI(sender_psid,'Hi there! This bot is created by Hary Pham. Watch more videos on HaryPhamDev Channel!');
        }
-       if(entityChosen === "wit$jefe"){
+       if(entityChosen === "wit$thanks"){
            //send thanks message
-           callSendAPI(sender_psid,`Ères el jefe`);
+           callSendAPI(sender_psid,`You 're welcome!`);
        }
-        if(entityChosen === "wit$otro"){
+        if(entityChosen === "wit$bye"){
             //send bye message
-            callSendAPI(sender_psid,'Eres un agente externo');
+            callSendAPI(sender_psid,'bye-bye!');
         }
     }
 }
