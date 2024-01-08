@@ -187,6 +187,36 @@ function handleMessage(sender_psid, message) {
         }
     });
 
+    if (message.text && message.text.toLowerCase().includes("empleadaboton")) {
+        // Enviar un mensaje con botones para "empleada"
+        const buttons = [
+            {
+                type: "postback",
+                title: "Sí",
+                payload: "EMPLEADA_SI"
+            },
+            {
+                type: "postback",
+                title: "No",
+                payload: "EMPLEADA_NO"
+            }
+        ];
+    
+        const messageData = {
+            attachment: {
+                type: "template",
+                payload: {
+                    template_type: "button",
+                    text: "¿Eres una empleada?",
+                    buttons: buttons
+                }
+            }
+        };
+    
+        callSendAPI(sender_psid, messageData);
+        return;
+    }
+
     if(entityChosen === ""){
         //default
         callSendAPI(sender_psid,`The bot is needed more training, try to say "thanks a lot" or "hi" to the bot` );
