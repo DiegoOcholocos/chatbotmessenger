@@ -178,6 +178,36 @@ function handleMessage(sender_psid, message) {
         return;
     }
 
+    if (message.text && message.text.toLowerCase().includes("empleada")) {
+        // Enviar un mensaje con botones para "empleada"
+        const buttons = [
+            {
+                type: "postback",
+                title: "Sí",
+                payload: "EMPLEADA_SI"
+            },
+            {
+                type: "postback",
+                title: "No",
+                payload: "EMPLEADA_NO"
+            }
+        ];
+    
+        const messageData = {
+            attachment: {
+                type: "template",
+                payload: {
+                    template_type: "button",
+                    text: "¿Eres una empleada?",
+                    buttons: buttons
+                }
+            }
+        };
+    
+        callSendAPI(sender_psid, messageData);
+        return;
+    }
+
     let entitiesArr = [ "wit$greetings", "wit$thanks", "wit$bye" ];
     let entityChosen = "";
     entitiesArr.forEach((name) => {
